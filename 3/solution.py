@@ -1,12 +1,12 @@
 def schematic_reader(filename):
     with open(filename) as rawtxt:
-        schematic = []
+        schematic = [] #schematic is list of lists
         for line in rawtxt:
             schematic.append([])
             for c in line.strip():
-                schematic[-1].append(c)
-    # for line in schematic:
-    #     print(line)
+                schematic[-1].append(c) #add each character to end of most recent (-1) list
+    #for line in schematic:
+    #    print(line)
     return schematic
 
 def symbol_finder(schematic):
@@ -41,29 +41,27 @@ def schematic_solver(filename):
                 current_num_gear_coords = {}
         if current_num_gear_coords != {}:
             gear_adjacencies.append({"number" : current_num, "gear" : current_num_gear_coords})
-    for adjacency_a in gear_adjacencies:
-        #gear_adjacencies.pop(0)
+    for a in range(len(gear_adjacencies)):
         gear_engaged = False
-        for adjacency_b in gear_adjacencies:
-            if adjacency_a == adjacency_b:
-                continue
-            if adjacency_a["gear"] == adjacency_b["gear"]:
+        for b in range(a+1, len(gear_adjacencies)): #between both loops, compare each item with each other item once
+            if gear_adjacencies[a]["gear"] == gear_adjacencies[b]["gear"]:
                 if gear_engaged:
-                    break
+                    gear_engaged = False
+                    break #maximum two numbers per gear
                 gear_engaged = True
                 #print("gear engaged for first time at {} ({}) by {} and {}".format(adjacency_a["gear"], adjacency_b["gear"], adjacency_a["number"], adjacency_b["number"]))
-                secondary_value = adjacency_b["number"]
+                secondary_value = gear_adjacencies[b]["number"]
         if gear_engaged:
-            solution += int(adjacency_a["number"]) * int(secondary_value)
-    return solution / 2
+            solution += int(gear_adjacencies[a]["number"]) * int(secondary_value)
+    return solution
 
 def schematic_solver_part_one(filename):
     schematic = schematic_reader(filename)
     symbol_locations = symbol_finder(schematic)
-    gear_ratio = 0
+    part_number_sum = 0
     for y in range(len(schematic)):
         current_num = ""
-        current_num_has_gear = False
+        current_num_has_symbol = False
         for x in range(len(schematic[y])):
             if schematic[y][x].isdigit():
                 current_num += schematic[y][x]
@@ -83,13 +81,17 @@ def schematic_solver_part_one(filename):
     return part_number_sum
 
 #test
-PART_TWO = True
+PART_TWO = False
 if not PART_TWO:
     EXAMPLE_SOLUTION = 4361
 else:
     EXAMPLE_SOLUTION = 467835
-if (possible_solution := schematic_solver("example")) == EXAMPLE_SOLUTION:
+if (PART_TWO and (possible_solution := schematic_solver("example")) == EXAMPLE_SOLUTION) or (
+    not PART_TWO and (possible_solution := schematic_solver_part_one("example")) == EXAMPLE_SOLUTION):
     print("\npassed test\n")
-    print("solution should be {}".format(schematic_solver("input")))
+    if not PART_TWO:
+        print("solution should be {}".format(schematic_solver_part_one("input")))
+    else:
+        print("solution should be {}".format(schematic_solver("input")))
 else:
     print("failed test with result {}, should be {}".format(possible_solution, EXAMPLE_SOLUTION))

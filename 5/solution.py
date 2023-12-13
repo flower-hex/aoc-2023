@@ -1,13 +1,24 @@
+PART_1 = False
+if PART_1:
+    EXAMPLE_SOLUTION = 35
+else:
+    EXAMPLE_SOLUTION = 46
+
 def almanac_interpreter(filename):
     with open(filename) as rawtxt:
         seeds = []
         seeds_mapped = []
         mapped_seeds_for_deletion = []
         for line in rawtxt:
+            print(seeds)
             if "seeds: " in line:
                 seeds = line[line.index(":")+2:-1].split(" ")
                 seeds = [int(x) for x in seeds]
-                #seeds = [seeds[3]] # for testing
+                if not PART_1:
+                    for i in range(len(seeds)):
+                        if i % 2 == 0:
+                            seeds_mapped += [x for x in range(seeds[i], seeds[i] + seeds[i+1])]
+                    seeds = []
             elif ":" in line:
                 seeds += seeds_mapped
                 seeds_mapped = []
@@ -22,14 +33,11 @@ def almanac_interpreter(filename):
                 seeds = [x for x in seeds if x not in mapped_seeds_for_deletion]
                 mapped_seeds_for_deletion = []
     seeds += seeds_mapped
+    print(seeds)
     return min(seeds)
 
-def create_mapping(mapping, x):
-    return
-
-EXAMPLE_SOLUTION = 35
 if (solution := almanac_interpreter("example")) == EXAMPLE_SOLUTION:
-    print("passed test!")
+    print(f"passed test with solution {solution}!")
     print("solution should be {}".format(almanac_interpreter("input")))
 else:
     print(f"failed test with result {solution}")

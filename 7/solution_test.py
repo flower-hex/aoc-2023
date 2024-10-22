@@ -1,4 +1,4 @@
-from solution import parseInput, sortHandsQuickPass, refineSort
+from solution import parseInput, sortHands, solveSorted
 import pytest
 
 ''' example input:
@@ -17,32 +17,27 @@ FORMATTED_INPUT_EXAMPLE = [{"cards" : "32T3K", "bid" : 765},
                            {"cards" : "KTJJT", "bid" : 220},
                            {"cards" : "QQQJA", "bid" : 483}]
 
-ROUGH_SORT_EXAMPLE = {
-        "Five of a kind" : [],
-        "Four of a kind" : [],
-        "Full house" : [],
-        "Three of a kind" : [{"cards" : "T55J5", "bid" : 684}, {"cards" : "QQQJA", "bid" : 483}],
-        "Two pair" : [{"cards" : "KK677", "bid" : 28}, {"cards" : "KTJJT", "bid" : 220}],
-        "One pair" : [{"cards" : "32T3K", "bid" : 765}],
-        "High card" : []}
+SORT_EXAMPLE = [
+        [], # High card
+        [{"cards" : "32T3K", "bid" : 765}], # One pair
+        [{"cards" : "KTJJT", "bid" : 220},
+         {"cards" : "KK677", "bid" : 28}], # Two pair
+        [{"cards" : "T55J5", "bid" : 684},
+         {"cards" : "QQQJA", "bid" : 483}], # Three of a kind
+        [], # Full house
+        [], # Four of a kind
+        []] # Five of a kind
 
-FINE_SORT_EXAMPLE = {
-        "Five of a kind" : [],
-        "Four of a kind" : [],
-        "Full house" : [],
-        "Three of a kind" : [{"cards" : "QQQJA", "bid" : 483}, {"cards" : "T55J5", "bid" : 684}],
-        "Two pair" : [{"cards" : "KTJJT", "bid" : 220}, {"cards" : "KK677", "bid" : 28}],
-        "One pair" : [{"cards" : "32T3K", "bid" : 765}],
-        "High card" : []}
+SOLUTION_EXAMPLE = 6440
 
 def testParsing():
     formattedInputAttempt = parseInput(PATH_EXAMPLE)
     assert formattedInputAttempt == FORMATTED_INPUT_EXAMPLE
 
-def testRoughSort():
-    roughlySorted = sortHandsQuickPass(FORMATTED_INPUT_EXAMPLE)
-    assert roughlySorted == ROUGH_SORT_EXAMPLE
+def testSortHands():
+    roughlySorted = sortHands(FORMATTED_INPUT_EXAMPLE)
+    assert roughlySorted == SORT_EXAMPLE
 
-def refineSort():
-    finelySorted = refineSort(ROUGH_SORT_EXAMPLE)
-    assert finelySorted == FINE_SORT_EXAMPLE
+def testSolveSorted():
+    outputSum = solveSorted(SORT_EXAMPLE)
+    assert outputSum == SOLUTION_EXAMPLE

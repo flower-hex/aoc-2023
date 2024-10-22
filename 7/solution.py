@@ -9,7 +9,7 @@ def parseInput(path : str):
 
         return hands
     
-def sortHands(hands : list[dict["cards" : str, "bid" : int]]):
+def sortHands(hands : list[dict["cards" : str, "bid" : int]], isPart2 : bool = 0):
 
     handTypes = []
     for _ in range(7): # 7 types of hands (see below)
@@ -25,47 +25,67 @@ def sortHands(hands : list[dict["cards" : str, "bid" : int]]):
     fiveOfAKind = 6     # AAAAA
     
     for hand in hands:
-        # start by sorting the hand into its type by using the number of character repeats
-        quickCount = len(set(c for c in hand["cards"]))
+        if isPart2 and "J" in hand["cards"]:
+            handMinusJ = set(c for c in hand["cards"]) - {"J"}
+            quickCount = len(handMinusJ)
 
-        if quickCount == 5: # 5 different cards
-            handTypes[highCard] = sortHandsWithinTypes(handTypes[highCard], hand)
+            if quickCount <= 1: #aJJJJ or JJJJJ
+                handID = fiveOfAKind
+
+            elif quickCount == 2: # aabbJ or aabJJ or abJJJ, aabbJ = fullhouse
+                if hand["cards"].count(handMinusJ.pop()) == 2 and hand["cards"].count(handMinusJ.pop()) == 2:
+                    handID = fullHouse
+                else:
+                    handID = fourOfAKind
             
-        elif quickCount == 4: # 4 different
-            #handTypes[pair].append(hand)
-            handTypes[pair] = sortHandsWithinTypes(handTypes[pair], hand)
+            elif quickCount == 3: # abcJJ or aabcJ
+                handID = threeOfAKind
+            
+            else: # abcdJ
+                handID = pair
 
-        elif quickCount == 1: # ding ding ding
-            #handTypes[fiveOfAKind].append(hand)
-            handTypes[fiveOfAKind] = sortHandsWithinTypes(handTypes[fiveOfAKind], hand)
+        else:
+            # start by sorting the hand into its type by using the number of character repeats
+            quickCount = len(set(c for c in hand["cards"]))
 
-        elif quickCount == 2: # four of a kind OR full house
-            if hand["cards"].count(hand["cards"][0]) in (1,4):
-                #handTypes[fourOfAKind].append(hand)
-                handTypes[fourOfAKind] = sortHandsWithinTypes(handTypes[fourOfAKind], hand)
-            else: #handTypes[fullHouse].append(hand)
-                handTypes[fullHouse] = sortHandsWithinTypes(handTypes[fullHouse], hand)
+            if quickCount == 5: # 5 different cards
+                handID = highCard
+                
+            elif quickCount == 4: # 4 different
+                handID = pair
 
-        else: # three of a kind OR two pair
-            assert quickCount == 3
-            for c in hand["cards"]: # first card 
-                cardCount = hand["cards"].count(c)
-                if cardCount == 2:
-                    #handTypes[twoPair].append(hand)
-                    handTypes[twoPair] = sortHandsWithinTypes(handTypes[twoPair], hand)
-                    break
-                elif cardCount == 3:
-                    #handTypes[threeOfAKind].append(hand)
-                    handTypes[threeOfAKind] = sortHandsWithinTypes(handTypes[threeOfAKind], hand)
-                    break
+            elif quickCount == 1: # ding ding ding
+                handID = fiveOfAKind
+
+            elif quickCount == 2: # four of a kind OR full house
+                if hand["cards"].count(hand["cards"][0]) in (1,4):
+                    handID = fourOfAKind
+                else:
+                    handID = fullHouse
+
+            else: # three of a kind OR two pair
+                assert quickCount == 3
+                for c in hand["cards"]: # first card 
+                    cardCount = hand["cards"].count(c)
+                    if cardCount == 2:
+                        handID = twoPair
+                        break
+                    elif cardCount == 3:
+                        handID = threeOfAKind
+                        break
+
+        handTypes[handID] = sortHandsWithinTypes(handTypes[handID], hand, isPart2)
 
     return handTypes
 
 
-def newHandLessThanOldHand(oldHand, newHand):
+def newHandLessThanOldHand(oldHand, newHand, isPart2 : bool = 0):
     cardValues = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"]
+    if isPart2:
+        cardValues = ["A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J"]
+
     for i in range(5): # 5 cards per hand
-        oldCard = oldHand["cards"][i] # ith letter of old hand
+        oldCard = oldHand["cards"][i] # ith card of old hand
         newCard = newHand["cards"][i]
         for c in cardValues:
             if newCard == c and oldCard == c:
@@ -75,11 +95,11 @@ def newHandLessThanOldHand(oldHand, newHand):
             elif newCard == c:
                 return False
 
-def sortHandsWithinTypes(currentHands : list, hand : dict):
+def sortHandsWithinTypes(currentHands : list, hand : dict, isPart2 : bool = 0):
     # return the revised list by inserting the new hand at the correct location
 
     for handNumber in range(len(currentHands)):
-        if newHandLessThanOldHand(currentHands[handNumber], hand):
+        if newHandLessThanOldHand(currentHands[handNumber], hand, isPart2):
             currentHands.insert(handNumber, hand)
             break
     else: # i.e. if we exit the for loop without breaking
@@ -100,4 +120,8 @@ def solveSorted(finishedSort : list):
 formatted_input = parseInput("7/input.txt")
 sorted_input = sortHands(formatted_input)
 output = solveSorted(sorted_input)
-print("part 2 solution is {}".format(output))
+print("part 1 solution is {}".format(output))
+
+sorted_input_part2 = sortHands(formatted_input, True)
+output_part2 = solveSorted(sorted_input_part2)
+print("part 2 solution is {}".format(output_part2))

@@ -30,6 +30,19 @@ SORT_EXAMPLE = [
 
 SOLUTION_EXAMPLE = 6440
 
+SORT_EXAMPLE_PART_2 = [
+        [], # High card
+        [{"cards" : "32T3K", "bid" : 765}], # One pair
+        [{"cards" : "KK677", "bid" : 28}], # Two pair
+        [], # Three of a kind
+        [], # Full house
+        [{"cards" : "T55J5", "bid" : 684},
+         {"cards" : "QQQJA", "bid" : 483},
+         {"cards" : "KTJJT", "bid" : 220}], # Four of a kind
+        []] # Five of a kind
+
+SOLUTION_EXAMPLE_PART_2 = 5905
+
 def testParsing():
     formattedInputAttempt = parseInput(PATH_EXAMPLE)
     assert formattedInputAttempt == FORMATTED_INPUT_EXAMPLE
@@ -41,3 +54,7 @@ def testSortHands():
 def testSolveSorted():
     outputSum = solveSorted(SORT_EXAMPLE)
     assert outputSum == SOLUTION_EXAMPLE
+
+def testSortHandsPart2():
+    roughlySorted = sortHands(FORMATTED_INPUT_EXAMPLE, 1)
+    assert roughlySorted == SORT_EXAMPLE_PART_2

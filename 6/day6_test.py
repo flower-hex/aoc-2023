@@ -1,4 +1,4 @@
-import solution
+import day6_solution
 import pytest
 
 """
@@ -15,15 +15,15 @@ MULTIPLES_EXAMPLE = [4, 8, 9]
 SOLUTION_EXAMPLE = 288
 
 def testParsing():
-  result = solution.parseInput("6/example.txt")
+  result = day6_solution.parseInput("6/example.txt")
   assert result == FORMATTED_INPUT_EXAMPLE
 
 def testParsing2():
-  result = solution.parseInput2("6/example.txt")
+  result = day6_solution.parseInput2("6/example.txt")
   assert result == FORMATTED_INPUT_EXAMPLE2
 
 def testExampleMultiplication():
-  result = solution.solveInput(FORMATTED_INPUT_EXAMPLE)
+  result = day6_solution.solveInput(FORMATTED_INPUT_EXAMPLE)
   assert result == SOLUTION_EXAMPLE
 
 @pytest.mark.parametrize("time,distance,expected", [
@@ -33,7 +33,7 @@ def testExampleMultiplication():
   (71530, 940200, 71503)
 ])
 def testExampleRecord(time, distance, expected):
-  result = solution.solveRace(time, distance)
+  result = day6_solution.solveRace(time, distance)
   assert result == expected
 
 # ty hannah!

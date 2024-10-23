@@ -1,0 +1,2 @@
+def parseInput(path):
+    return

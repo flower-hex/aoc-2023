@@ -1,4 +1,4 @@
-from solution import parseInput, sortHands, solveSorted
+from day7_solution import parseInput, sortHands, solveSorted
 import pytest
 
 ''' example input:

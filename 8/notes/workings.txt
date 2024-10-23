@@ -1,0 +1,2 @@
+L/R is binary and directions can be interpreted as a bit string 
+other input describes a network, hashed storage using identifier will allow for fast indexing

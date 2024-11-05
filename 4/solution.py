@@ -12,7 +12,7 @@ def card_reader(filename):
             overlap = len({x for x in winning_numbers if x != ""} & {x for x in our_numbers}) #set intersection
             if overlap:
                 for i in range(1, overlap + 1):
-                    card_rolodex[card_index + i] += 1 * card_rolodex[card_index] #increment future cards for each copy of the current card
+                    card_rolodex[card_index + i] += card_rolodex[card_index] #increment future cards for each copy of the current card
     return sum(card_rolodex)
 
 EXAMPLE_SOLUTION = 30

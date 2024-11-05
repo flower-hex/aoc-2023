@@ -1,2 +1,23 @@
 L/R is binary and directions can be interpreted as a bit string 
 other input describes a network, hashed storage using identifier will allow for fast indexing
+
+part 2 may require upwards of several million steps - could it be faster to pre-calculate the number of steps it takes to reach an endpoint from every configuration of starting point in node + directions?
+we could then solve the multiple simultaneous node problem mathematically for a fairly arbitrary number of nodes by comparing between step counts to endpoints, using endpoints as startpoints when we reach them.
+this would eliminate one type of redundant network traversal by never repeating an identical path through the network.
+770 nodes, 263 directions, possibly very roughly 16043 steps on average to reach an endpoint from any given node
+770 * 263 * 16043 = 3,248,867,930
+an upper bound of 3 trillion is a lot but in reality we should be able to avoid most of these steps in practice, because each of those 16043 steps can solve one of the 770 * 263 possible starting configurations.
+if calculated with perfect efficiency the number of steps required to weight every edge is only 770 * 263 = 202,510, only one order of magnitude higher than our part one solution
+
+essentially the idea is to produce a graph where each node has weighted edges to the nearest end point, with one edge per potential direction index.
+
+this could be structured something like
+solved_graph = set[ str["node id"] : set[ weighted_edges : solution ] ]
+where
+weighted_edges = int["instruction index"]
+and
+solution = tuple[ int["step count to nearest end node"], str["end node id"] ]
+
+weighted_edges would have length 263 and solved_graph length 770
+for smaller problems like part 1 this is very memory inefficient? but precalculating a solved graph should be significantly faster by eliminating redundant graph traversal.
+producing a solved graph in this way is only possible because we are using the instruction indices as edges connecting directly to end points- trying to weight the original graph would result in very rapidly ballooning complexity.

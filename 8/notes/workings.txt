@@ -21,3 +21,7 @@ solution = tuple[ int["step count to nearest end node"], str["end node id"] ]
 weighted_edges would have length 263 and solved_graph length 770
 for smaller problems like part 1 this is very memory inefficient? but precalculating a solved graph should be significantly faster by eliminating redundant graph traversal.
 producing a solved graph in this way is only possible because we are using the instruction indices as edges connecting directly to end points- trying to weight the original graph would result in very rapidly ballooning complexity.
+
+i should count forwards instead of working backwards from end nodes - it may not be possible to reach an endpoint at any given combination of node plus instruction index.
+working out the distance from the end point is still as simple as just (count - i), where i is the number of steps we've taken to reach that node and count is the total number of steps we take before an endpoint.
+forwards traversal will help prevent redundant walks 
